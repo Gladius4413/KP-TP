@@ -1,0 +1,31 @@
+﻿@model WebMessager.ViewModels.IndexViewModel;
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+<div>
+    <label>Список пользователй</label>
+
+    @foreach (var chat in Model.Chats)
+    {
+        <div>
+            <p> @Html.ActionLink(@chat.UserName, "Messages", "Home", new { @chat.ConnectionId, @chat.UserId })  </p>
+
+        </div>
+    }
+
+</div>
+<br />
+<form asp-action="Logout" asp-controller="Account" asp-anti-forgery="true">
+    <div class="form-group">
+        <input type="submit" value="Выйти" class="btn btn-outline-dark" />
+    </div>
+</form>
