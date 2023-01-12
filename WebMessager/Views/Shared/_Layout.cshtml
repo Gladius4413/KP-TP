@@ -35,6 +35,10 @@
             {
                 RenderSection("ListOfUsers");
             }
+            @if (IsSectionDefined("CurrentMessages"))
+            {
+                RenderSection("CurrentMessages");
+            }
             @RenderBody()
         </main>
     </div>

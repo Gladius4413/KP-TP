@@ -35,7 +35,7 @@ namespace WebMessager.Controllers
         }
 
         
-        public IActionResult Messages(long userId, string connectionId)
+        public IActionResult Messages()
         {
             
             return View();

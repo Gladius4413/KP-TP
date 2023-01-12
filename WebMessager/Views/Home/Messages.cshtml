@@ -13,22 +13,12 @@
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
 <div>
-    <label>Список пользователей</label>
-    @foreach (var chat in Model.Chats)
-    {
-        <div>
-            <p> @Html.ActionLink(@chat.UserName, "Messages", "Home", new { @chat.ConnectionId, @chat.UserId })  </p>
-
-        </div>
+    @section ListOfUsers {
+        @await Component.InvokeAsync("UserChats")
     }
-    <label>Сообщения</label>
-    @*@foreach (var mes in Model.Messages)
-    {
-        <div>
-            <p>@mes.Text</p>
-            <p>@mes.Date</p>
-        </div>
-    }*@
+    @section CurrentMessages {
+        @await Component.InvokeAsync("CurrentChat")
+    }
 
 </div>
 <br />

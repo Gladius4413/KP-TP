@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace WebMessager.ViewModels
 {
@@ -6,6 +7,8 @@ namespace WebMessager.ViewModels
     {
         public DateTime Date { get; set; }
         public string Text { get; set; }
+
+ 
 
     }
 }
