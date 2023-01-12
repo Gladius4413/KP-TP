@@ -14,17 +14,19 @@ namespace WebMessager.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private MessagerContext db;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, MessagerContext context)
         {
             _logger = logger;
+            db = context;
         }
         [Authorize]
         public IActionResult Index()
         {
-            var model = new IndexViewModel();
-            model.Chats = new List<ChatViewModel> { new ChatViewModel { UserName = "Marv", ConnectionId = "", Messages = new List<PrivateMessageViewModel> { new PrivateMessageViewModel { Date = DateTime.Now.AddDays(-1), Text = "123" } } } };
-            return View(model);
+            
+           
+            return View();
         }
 
         public IActionResult Privacy()
@@ -32,12 +34,11 @@ namespace WebMessager.Controllers
             return View();
         }
 
-
+        
         public IActionResult Messages(long userId, string connectionId)
         {
-            var model = new IndexViewModel();
-            model.Chats = new List<ChatViewModel> { new ChatViewModel { UserName = "Marv",  UserId = userId, ConnectionId = connectionId, Messages = new List<PrivateMessageViewModel> { new PrivateMessageViewModel { Date = DateTime.Now.AddDays(-1), Text = "123" } } } };
-            return View(model);
+            
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

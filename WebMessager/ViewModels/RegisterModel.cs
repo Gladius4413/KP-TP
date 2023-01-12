@@ -18,5 +18,12 @@ namespace WebMessager.ViewModels
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Пароль введен неверно")]
         public string ConfirmPassword { get; set; }
+
+        [Required(ErrorMessage = "Не указано имя ")]
+        public string Name { get; set; }
+        [Required(ErrorMessage = "Не указана фамилия")]
+        public string SecondName { get; set; }
+      
+        public string AboutMe { get; set; }
     }
 }

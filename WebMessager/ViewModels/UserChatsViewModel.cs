@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
-using WebMessager.ViewModels;
 
 namespace WebMessager.ViewModels
 {
-    public class IndexViewModel
+    public class UserChatsViewModel
     {
-
         public List<ChatViewModel> Chats { get; set; }
     }
 }

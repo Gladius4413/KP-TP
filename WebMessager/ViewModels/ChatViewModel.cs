@@ -8,7 +8,7 @@ namespace WebMessager.ViewModels
         public string UserName { get; set; }
         public long UserId { set; get; }
         public string ConnectionId { get; set; }
-        public List<PrivateMessageViewModel> Messages { get; set; }
+        //public List<PrivateMessageViewModel> Messages { get; set; }
         public List<ChatViewModel> Chats { get; set; }
     }
 }

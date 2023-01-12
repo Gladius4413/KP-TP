@@ -54,13 +54,13 @@ namespace WebMessager.Controllers
                 if (user == null)
                 {
                     // добавляем пользователя в бд
-                    user = new User { Mail = model.Mail, Password = model.Password };
+                    user = new User { Mail = model.Mail, Password = model.Password, Name = model.Name, SecondName = model.SecondName, AboutMe = model.AboutMe};
                     db.User.Add(user);
                     await db.SaveChangesAsync();
 
                     await Authenticate(user.Id, model.Mail); // аутентификация
 
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Login", "Account");
                 }
                 else
                     ModelState.AddModelError("", "Некорректные логин и(или) пароль");

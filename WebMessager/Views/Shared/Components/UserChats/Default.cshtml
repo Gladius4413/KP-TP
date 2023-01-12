@@ -1,0 +1,17 @@
+﻿@model WebMessager.ViewModels.UserChatsViewModel;
+
+
+    <div>
+        <label>Список пользователй</label>
+
+        @foreach (var chat in Model.Chats)
+        {
+            <div>
+                @*<p> @Html.ActionLink(@chat.UserName, "Messages", "Home", new { @chat.ConnectionId, @chat.UserId })  </p>*@
+
+                <a asp-area="" asp-controller="Home" asp-action="Messages">@chat.UserName</a>
+
+            </div>
+        }
+
+    </div>

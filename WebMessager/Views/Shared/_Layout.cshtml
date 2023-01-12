@@ -31,6 +31,10 @@
     </header>
     <div class="container">
         <main role="main" class="pb-3">
+            @if (IsSectionDefined("ListOfUsers"))
+            {
+                RenderSection("ListOfUsers");
+            }
             @RenderBody()
         </main>
     </div>
