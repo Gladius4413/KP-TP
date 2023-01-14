@@ -16,14 +16,10 @@ namespace WebMessager.Components
         //{
         //    this.context = context;
         //}
-        public async Task<IViewComponentResult> InvokeAsync()
+        public async Task<IViewComponentResult> InvokeAsync(ChatViewModel model)
         {
       
-            var model = new CurrentChatViewModel();
-            model.Messages = new List<PrivateMessageViewModel>() { new PrivateMessageViewModel() { Text = "123123", Date = DateTime.Now } };
-
-
-
+           
             return View(model);
 
         }

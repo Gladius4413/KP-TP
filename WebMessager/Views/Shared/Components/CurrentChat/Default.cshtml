@@ -1,4 +1,4 @@
-﻿@model WebMessager.ViewModels.CurrentChatViewModel;
+﻿@model WebMessager.ViewModels.ChatViewModel;
 
 
 <div>
@@ -6,13 +6,46 @@
 
     @foreach (var mes in Model.Messages)
     {
-<div>
+        <div id="messages">
 
-    <p>@mes.Text</p>
-    <p>@mes.Date</p>
+            <p>@mes.Text</p>
+            <p>@mes.Date</p>
 
 
-</div>
+        </div>
     }
+    <div>
+        <input type="text" id="userId" value="@Model.UserId" hidden />
+        <input type="text" id="mess" placeholder="Напишите сообщение" />
+        <input type="submit" id="sendBtn" value="Отправить" />
+    </div>
 
 </div>
+
+<script>debugger;
+    console.log("123123123");
+    const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/chat")
+            .build();
+
+        // получение сообщения от сервера
+        hubConnection.on('Receive', function (message) {
+
+            let elem = document.createElement("p");
+            elem.appendChild(document.createTextNode(message));
+
+            var firstElem = document.getElementById("messages").firstChild;
+            document.getElementById("messages").insertAfter(elem, firstElem);
+
+        });
+
+        // отправка сообщения на сервер
+    document.getElementById("sendBtn").addEventListener("click", function (e) {
+        let userId = document.getElementById("userId");
+        let getMess = document.getElementById("mess");
+        let mess = { text: getMess.value, idFrom: 0, idTo: userId , date: null};
+            hubConnection.invoke('Send', mess);
+            getMess.value = "";
+        });
+
+        hubConnection.start();</script>

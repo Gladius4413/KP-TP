@@ -17,7 +17,7 @@
         @await Component.InvokeAsync("UserChats")
     }
     @section CurrentMessages {
-        @await Component.InvokeAsync("CurrentChat")
+        @await Component.InvokeAsync("CurrentChat", Model)
     }
 
 </div>

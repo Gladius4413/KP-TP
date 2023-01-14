@@ -34,7 +34,7 @@ namespace WebMessager.Controllers
             return View();
         }
 
-        
+        [Authorize]
         public IActionResult Messages()
         {
             

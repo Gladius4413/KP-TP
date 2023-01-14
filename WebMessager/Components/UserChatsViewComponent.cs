@@ -23,7 +23,7 @@ namespace WebMessager.ViewComponents
             var currentUserId = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
             var users = await context.User.Where(x => x.Id != currentUserId).ToListAsync();
             var model = new UserChatsViewModel();
-            model.Chats = users.Select(x => new ChatViewModel() {UserId = x.Id, UserName = x.Name }).ToList();
+            model.Chats = users.Select(x => new ChatViewModel() {UserId = x.Id, UserName = x.Name, Messages = new List<PrivateMessageViewModel> { } }).ToList();
             return View(model);
 
         }
