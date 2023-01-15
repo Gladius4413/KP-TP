@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using WebMessager.ViewModels; 
-using WebMessager.Models; 
+using WebMessager.ViewModels;
+using WebMessager.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -13,6 +15,12 @@ namespace WebMessager.Controllers
     public class AccountController : Controller
     {
         private MessagerContext db;
+
+
+        public static List<PrivateMessageViewModel> Message = new List<PrivateMessageViewModel>
+        {
+        };
+
         public AccountController(MessagerContext context)
         {
             db = context;
@@ -54,7 +62,7 @@ namespace WebMessager.Controllers
                 if (user == null)
                 {
                     // добавляем пользователя в бд
-                    user = new User { Mail = model.Mail, Password = model.Password, Name = model.Name, SecondName = model.SecondName, AboutMe = model.AboutMe};
+                    user = new User { Mail = model.Mail, Password = model.Password, Name = model.Name, SecondName = model.SecondName, AboutMe = model.AboutMe };
                     db.User.Add(user);
                     await db.SaveChangesAsync();
 
@@ -75,7 +83,7 @@ namespace WebMessager.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
                 new Claim(ClaimsIdentity.DefaultNameClaimType, userName)
-               
+
             };
             // создаем объект ClaimsIdentity
             ClaimsIdentity id = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);

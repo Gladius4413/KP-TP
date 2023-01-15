@@ -17,6 +17,7 @@ namespace WebMessager.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new FriendConfiguration1());
+            modelBuilder.ApplyConfiguration(new PrivateMessageConfiguration1());
 
         }
     }
@@ -24,7 +25,7 @@ namespace WebMessager.Models
     {
         public void Configure(EntityTypeBuilder<Friend> builder)
         {
-            builder.ToTable("Friend").HasKey(f => f.Id);
+            builder.ToTable(nameof(Friend)).HasKey(f => f.Id);
             builder.HasOne(f => f.User1)
                     .WithMany()
                     .HasForeignKey(f => f.User1Id)
@@ -34,9 +35,29 @@ namespace WebMessager.Models
                     .HasForeignKey(f => f.User2Id)
                     .OnDelete(DeleteBehavior.NoAction);
 
+            
+
+        }
+
+    }
+    public class PrivateMessageConfiguration1 : IEntityTypeConfiguration<PrivateMessage>
+    {
+        public void Configure(EntityTypeBuilder<PrivateMessage> builder)
+        {
+            builder.ToTable(nameof(PrivateMessage)).HasKey(f => f.Id);
+            builder.HasOne(f => f.UserFrom)
+                    .WithMany()
+                    .HasForeignKey(f => f.UserFromId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            builder.HasOne(f => f.UserTo)
+                    .WithMany()
+                    .HasForeignKey(f => f.UserToId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
 
 
         }
+
     }
 
 }

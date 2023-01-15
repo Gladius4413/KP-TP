@@ -1,19 +1,61 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.SignalR;
 using System.Threading.Tasks;
-using WebMessager.Models;
+using WebMessager.Controllers;
 using WebMessager.SignalrModels;
+using WebMessager.ViewModels;
+using WebMessager.Models;
 
 namespace WebMessager.Server
 {
     public class ChatHub : Hub
     {
+        private MessagerContext db;
+        public ChatHub( MessagerContext context)
+        {
+            db = context;
+        }
+        /// <summary>
+        /// The dictionary
+        /// </summary>
+        private static Dictionary<string, long> Connections = new();
+
         public async Task Send(MessageInfo mesInf)
         {
-            await Clients.Others.SendAsync("Receive", $"Добавлено: {mesInf.Text} в {mesInf.Date}");
+            var currentUserId = Connections[Context.ConnectionId];
+            var privateMessageViewModel = new PrivateMessageViewModel()
+            {
+                FromId = currentUserId,
+                ToId = mesInf.IdTo,
+                From = db.User.First(x => x.Id == currentUserId).Name,
+                To = db.User.First(x => x.Id == mesInf.IdTo).Name,
+                Date = DateTime.Now,
+                Text = mesInf.Text
+            };
+            AccountController.Message.Add(privateMessageViewModel);
+            var connectionIds = Connections.Where(x => x.Value == mesInf.IdTo || x.Value == currentUserId).Select(x => x.Key).ToList();
+            await Clients.Clients(connectionIds).SendAsync("Receive", privateMessageViewModel);
+        }
 
+        public override Task OnConnectedAsync()
+        {
+            var httpContext = Context.GetHttpContext();
+            var currentUserId = int.Parse(httpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            Connections.Add(Context.ConnectionId, currentUserId);
+            return base.OnConnectedAsync();
+        }
+
+        /// <summary>
+        /// Ons the disconnected using the specified exception
+        /// </summary>
+        /// <param name="exception">The exception</param>
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            Connections.Remove(Context.ConnectionId);
+            return base.OnDisconnectedAsync(exception);
         }
     }
 }

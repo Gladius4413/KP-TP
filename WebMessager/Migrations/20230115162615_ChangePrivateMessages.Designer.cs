@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebMessager.Models;
 
 namespace WebMessager.Migrations
 {
     [DbContext(typeof(MessagerContext))]
-    partial class MessagerContextModelSnapshot : ModelSnapshot
+    [Migration("20230115162615_ChangePrivateMessages")]
+    partial class ChangePrivateMessages
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

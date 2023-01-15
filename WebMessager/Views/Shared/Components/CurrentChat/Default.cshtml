@@ -3,17 +3,21 @@
 
 <div>
     <label>Сообщения</label>
-
-    @foreach (var mes in Model.Messages)
-    {
-        <div id="messages">
-
-            <p>@mes.Text</p>
-            <p>@mes.Date</p>
-
-
+    <div id="messageBox">
+        @foreach (var mes in Model.Messages)
+        {
+<div>
+    <div>
+        <div>
+            From @mes.From :
         </div>
-    }
+        <div>@mes.Text</div>
+        <div>@mes.Date</div>
+    </div>
+    <hr style="border-top: 3px dashed #bbb;">
+</div>
+        }
+    </div>
     <div>
         <input type="text" id="userId" value="@Model.UserId" hidden />
         <input type="text" id="mess" placeholder="Напишите сообщение" />
@@ -22,30 +26,39 @@
 
 </div>
 
-<script>debugger;
-    console.log("123123123");
+<script type="text/javascript">
+    function createMessage(message) {
+        let messageElem = document.createElement("div");
+        messageElem.innerHTML = "<div><div><div>From " + message.from + " : </div><div>" + message.text + "</div><div>" + new Date(message.date).toLocaleString() + "</div></div><hr style = \"border-top: 3px dashed #bbb;\"></div>";
+
+        let messageBox = document.getElementById("messageBox");
+        var lastElement = messageBox.lastElementChild;
+        lastElement.parentNode.insertBefore(messageElem, lastElement.nextSibling);
+    }
     const hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl("/chat")
-            .build();
+        .withUrl("/chat")
+        .build();
 
-        // получение сообщения от сервера
-        hubConnection.on('Receive', function (message) {
+    // получение сообщения от сервера
+    hubConnection.on('Receive', function (message) {
+        createMessage(message);
+    });
 
-            let elem = document.createElement("p");
-            elem.appendChild(document.createTextNode(message));
-
-            var firstElem = document.getElementById("messages").firstChild;
-            document.getElementById("messages").insertAfter(elem, firstElem);
-
-        });
-
-        // отправка сообщения на сервер
+    // отправка сообщения на сервер
     document.getElementById("sendBtn").addEventListener("click", function (e) {
         let userId = document.getElementById("userId");
         let getMess = document.getElementById("mess");
-        let mess = { text: getMess.value, idFrom: 0, idTo: userId , date: null};
+        let mess = { text: getMess.value, idFrom: 0, idTo: Number(userId.value), date: null };
+        try {
             hubConnection.invoke('Send', mess);
             getMess.value = "";
-        });
+        }
+        catch (err) {
+            console.error(err);
+        }
+    });
 
-        hubConnection.start();</script>
+    hubConnection.start();
+
+
+</script>
