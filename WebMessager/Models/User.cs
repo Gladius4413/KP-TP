@@ -19,7 +19,7 @@ namespace WebMessager.Models
 
         public List<GroupChat> Groupchats { get; set; }
         public List<GroupMessage> GroupMessages { get; set; }
-        public List<PrivateMessage> PrivateMessages { get; set; }
+        
 
 
     }

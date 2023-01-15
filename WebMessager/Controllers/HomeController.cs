@@ -39,15 +39,18 @@ namespace WebMessager.Controllers
         [Route("Home/Messages/{userId}")]
         public IActionResult Messages(long userId)
         {
+
             var user = db.User.First(x => x.Id == userId);
             var currentUserId = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
+            var Messages = db.PrivateMessage.Where(x =>
+                    (x.UserFromId == userId && x.UserToId == currentUserId) || (x.UserFromId == currentUserId && x.UserToId == userId)).Select(x => new PrivateMessageViewModel { Date = x.Date, From = x.UserFrom.Name, FromId = x.UserFromId, Text = x.Text, To = x.UserTo.Name, ToId = x.UserToId }).ToList();
             return View(new ChatViewModel
             {
                 UserId = user.Id,
-                Messages = AccountController.Message.Where(x =>
-                    (x.FromId == userId && x.ToId == currentUserId) || (x.FromId == currentUserId && x.ToId == userId)).ToList()
+                Messages = Messages
 
             });
+
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

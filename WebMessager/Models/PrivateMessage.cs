@@ -11,13 +11,13 @@ namespace WebMessager.Models
         public string Text { get; set; }
         public DateTime Date { get; set; }
 
+
         public long UserFromId { get; set; }
-        public long UserToId { get; set; }
-
-
         public User UserFrom { get; set; }
-        public User UserTo { get; set; }
 
+
+        public long UserToId { get; set; }
+        public User UserTo { get; set; }
 
 
     }

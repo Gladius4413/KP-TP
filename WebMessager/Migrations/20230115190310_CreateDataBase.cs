@@ -25,9 +25,10 @@ namespace WebMessager.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Mail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     SecondName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AboutMe = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -119,17 +120,22 @@ namespace WebMessager.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                    UserFromId = table.Column<long>(type: "bigint", nullable: false),
+                    UserToId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PrivateMessage", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PrivateMessage_User_UserId",
-                        column: x => x.UserId,
+                        name: "FK_PrivateMessage_User_UserFromId",
+                        column: x => x.UserFromId,
                         principalTable: "User",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_PrivateMessage_User_UserToId",
+                        column: x => x.UserToId,
+                        principalTable: "User",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(
@@ -158,9 +164,14 @@ namespace WebMessager.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PrivateMessage_UserId",
+                name: "IX_PrivateMessage_UserFromId",
                 table: "PrivateMessage",
-                column: "UserId");
+                column: "UserFromId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PrivateMessage_UserToId",
+                table: "PrivateMessage",
+                column: "UserToId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

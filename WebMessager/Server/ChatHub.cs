@@ -35,7 +35,16 @@ namespace WebMessager.Server
                 Date = DateTime.Now,
                 Text = mesInf.Text
             };
-            AccountController.Message.Add(privateMessageViewModel);
+            try
+            {
+                db.PrivateMessage.Add(new PrivateMessage { Date = privateMessageViewModel.Date, UserFromId = privateMessageViewModel.FromId, UserToId = privateMessageViewModel.ToId, Text = privateMessageViewModel.Text });
+                await db.SaveChangesAsync();
+
+            }
+            catch (Exception e)
+            {
+                return;
+            }
             var connectionIds = Connections.Where(x => x.Value == mesInf.IdTo || x.Value == currentUserId).Select(x => x.Key).ToList();
             await Clients.Clients(connectionIds).SendAsync("Receive", privateMessageViewModel);
         }

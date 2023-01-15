@@ -112,17 +112,12 @@ namespace WebMessager.Migrations
                     b.Property<long>("UserFromId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("UserId")
-                        .HasColumnType("bigint");
-
                     b.Property<long>("UserToId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserFromId");
-
-                    b.HasIndex("UserId");
 
                     b.HasIndex("UserToId");
 
@@ -215,10 +210,6 @@ namespace WebMessager.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("WebMessager.Models.User", null)
-                        .WithMany("PrivateMessages")
-                        .HasForeignKey("UserId");
-
                     b.HasOne("WebMessager.Models.User", "UserTo")
                         .WithMany()
                         .HasForeignKey("UserToId")
@@ -238,8 +229,6 @@ namespace WebMessager.Migrations
             modelBuilder.Entity("WebMessager.Models.User", b =>
                 {
                     b.Navigation("GroupMessages");
-
-                    b.Navigation("PrivateMessages");
                 });
 #pragma warning restore 612, 618
         }

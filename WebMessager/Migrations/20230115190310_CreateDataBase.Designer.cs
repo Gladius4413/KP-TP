@@ -10,8 +10,8 @@ using WebMessager.Models;
 namespace WebMessager.Migrations
 {
     [DbContext(typeof(MessagerContext))]
-    [Migration("20230114160145_ChangePrivateMess")]
-    partial class ChangePrivateMess
+    [Migration("20230115190310_CreateDataBase")]
+    partial class CreateDataBase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -111,12 +111,17 @@ namespace WebMessager.Migrations
                     b.Property<string>("Text")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("UserId")
+                    b.Property<long>("UserFromId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UserToId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserFromId");
+
+                    b.HasIndex("UserToId");
 
                     b.ToTable("PrivateMessage");
                 });
@@ -201,13 +206,21 @@ namespace WebMessager.Migrations
 
             modelBuilder.Entity("WebMessager.Models.PrivateMessage", b =>
                 {
-                    b.HasOne("WebMessager.Models.User", "User")
-                        .WithMany("PrivateMessages")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("WebMessager.Models.User", "UserFrom")
+                        .WithMany()
+                        .HasForeignKey("UserFromId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.HasOne("WebMessager.Models.User", "UserTo")
+                        .WithMany()
+                        .HasForeignKey("UserToId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("UserFrom");
+
+                    b.Navigation("UserTo");
                 });
 
             modelBuilder.Entity("WebMessager.Models.GroupChat", b =>
@@ -218,8 +231,6 @@ namespace WebMessager.Migrations
             modelBuilder.Entity("WebMessager.Models.User", b =>
                 {
                     b.Navigation("GroupMessages");
-
-                    b.Navigation("PrivateMessages");
                 });
 #pragma warning restore 612, 618
         }

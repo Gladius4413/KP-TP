@@ -17,9 +17,7 @@ namespace WebMessager.Controllers
         private MessagerContext db;
 
 
-        public static List<PrivateMessageViewModel> Message = new List<PrivateMessageViewModel>
-        {
-        };
+       
 
         public AccountController(MessagerContext context)
         {
