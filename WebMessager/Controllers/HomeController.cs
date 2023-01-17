@@ -34,6 +34,10 @@ namespace WebMessager.Controllers
         {
             return View();
         }
+        public IActionResult Friend()
+        {
+            return View();
+        }
 
         [Authorize]
         [Route("Home/Messages/{userId}")]
@@ -52,7 +56,7 @@ namespace WebMessager.Controllers
             });
 
         }
-
+        
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

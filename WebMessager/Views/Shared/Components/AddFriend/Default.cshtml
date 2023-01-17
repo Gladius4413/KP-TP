@@ -1,0 +1,54 @@
+﻿@model WebMessager.ViewModels.IndexFriendViewModel;
+
+
+<div>
+    <label>Список пользователей</label>
+
+    @foreach (var req in Model.Requests)
+    {
+<div>
+    @*<p> @Html.ActionLink(@chat.UserName, "Messages", "Home", new { @chat.ConnectionId, @chat.UserId })  </p>*@
+
+    <input type="text" id="userId" value="@req.UserId" hidden />
+    <input type="text" id="userName" value="@req.UserName" hidden />
+    <p>@req.UserName </p>
+    <input type="submit" id="AddToFriend" />
+
+</div>}
+
+
+</div>
+<script type="text/javascript">
+    function createFriendRequest(request) {
+        let friendElem = document.createElement("div");
+        friendElem.innerHTML = "<div><div><div>From " + request.from + " : </div><div>" + new Date(message.date).toLocaleString() + "</div><div><input type=\"submit\" id=\"\" value=\"Отправить\"/>" + "</div><div><input type=\"submit\" id=\"\" value=\"Отправить\"/>" + "</div></div></div>";
+
+    }
+
+
+    const hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/chat")
+        .build();
+
+    // получение сообщения от сервера
+    hubConnection.on('ReceiveReq', function (request) {
+        createFriendRequest(request);
+    });
+
+
+    // отправка сообщения на сервер
+    document.getElementById("AddToFriend").addEventListener("click", function (e) {
+        let userId = document.getElementById("userId");
+        let request = { idFrom: 0, idTo: Number(userId.value), date: null };
+        try {
+            hubConnection.invoke('SendFriendRequest', request);
+
+        }
+        catch (err) {
+            console.error(err);
+        }
+    });
+
+    hubConnection.start();
+</script>
+

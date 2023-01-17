@@ -14,7 +14,7 @@ namespace WebMessager.Server
     public class ChatHub : Hub
     {
         private MessagerContext db;
-        public ChatHub( MessagerContext context)
+        public ChatHub(MessagerContext context)
         {
             db = context;
         }
@@ -47,6 +47,28 @@ namespace WebMessager.Server
             }
             var connectionIds = Connections.Where(x => x.Value == mesInf.IdTo || x.Value == currentUserId).Select(x => x.Key).ToList();
             await Clients.Clients(connectionIds).SendAsync("Receive", privateMessageViewModel);
+        }
+
+        public async Task SendFriendRequest(FriendRequestInfo request)
+        {
+
+            var currentUserId = Connections[Context.ConnectionId];
+
+
+            var friendViewModel = new FriendViewModel()
+            {
+                FromId = currentUserId,
+                ToId = request.IdTo,
+                From = db.User.First(x => x.Id == currentUserId).Name,
+                To = db.User.First(x => x.Id == request.IdTo).Name,
+                Date = DateTime.Now
+
+            };
+            var connectionIds = Connections.Where(x => x.Value == request.IdTo || x.Value == currentUserId).Select(x => x.Key).ToList();
+            await Clients.Clients(connectionIds).SendAsync("ReceiveReq", friendViewModel);
+
+
+
         }
 
         public override Task OnConnectedAsync()

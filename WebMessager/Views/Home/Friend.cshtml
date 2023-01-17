@@ -1,0 +1,24 @@
+﻿@model WebMessager.ViewModels.IndexFriendViewModel;
+
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+
+
+
+<div>
+    @section AddFriends {
+        @await Component.InvokeAsync("AddFriend", Model)
+    }
+
+</div>
+<br />
+<form asp-action="Index" asp-controller="Home" asp-anti-forgery="true">
+    <div class="form-group">
+        <input type="submit" value="Вернуться к чату" class="btn btn-outline-dark" />
+    </div>
+</form>
+
