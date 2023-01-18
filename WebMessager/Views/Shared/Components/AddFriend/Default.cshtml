@@ -12,22 +12,23 @@
     <input class="user-id" type="text" value="@user.Id" hidden />
     <input class="user-name" type="text" value="@user.Name" hidden />
     <p>@user.Name </p>
-    <input class="add-to-friend" type="submit" @(rel != null && rel.ToId == user.Id && rel.Status != WebMessager.ViewModels.FriendStatus.Pending? "hidden" : "") @(rel != null && rel.ToId == user.Id && rel.Status == WebMessager.ViewModels.FriendStatus.Pending ? "disabled" : "")/>
+    <input class="add-to-friend" type="submit" @(rel != null && (rel.ToId == user.Id || rel.ToId == Model.CurrentUserId) && rel.Status != WebMessager.ViewModels.FriendStatus.Pending? "hidden" : "") @(rel != null && rel.ToId == user.Id && rel.Status == WebMessager.ViewModels.FriendStatus.Pending ? "disabled" : "")/>
     <div class="pending" @(rel != null && rel.ToId != user.Id && rel.Status == WebMessager.ViewModels.FriendStatus.Pending ? "":"hidden")>
         <div>
             <div>
                 <div>From <span class="name">@(rel?.From ?? "")</span></div>
                 <div><span class="date">@(rel?.Date.ToString() ?? "")</span></div>
                 <div>
-                    <input class="approve" type="button" value="Принять" relation="@(rel?.RelationshipId.ToString("D"))" onclick="approveRequest(this, true)">
+                    <input class="approve" type="button" value="Принять" relation="@(rel?.RelationshipId.ToString())" onclick="approveRequest(this, true)">
                 </div>
                 <div>
-                    <input class="decline" type="button" value="Отказать"relation="@(rel?.RelationshipId.ToString("D"))"  onclick="approveRequest(this, false)">
+                    <input class="decline" type="button" value="Отказать" relation="@(rel?.RelationshipId.ToString())"  onclick="approveRequest(this, false)">
                 </div>
             </div>
         </div>
     </div>
     <div class="friend-status" @(rel!= null && rel.Status == WebMessager.ViewModels.FriendStatus.Approve ? "":"hidden")>Ваш друг</div>
+    <div><input class="delete-friend" type="button" value="Удалить из друзей" relation="@(rel?.RelationshipId.ToString())"  onclick="approveRequest(this, false)"  @(rel!=null && rel.Status == WebMessager.ViewModels.FriendStatus.Approve ? "" : "hidden")/></div>
 </div>
     }
 
@@ -50,7 +51,7 @@
     }
 
     function approveRequest(button, status) {
-        hubConnection.invoke('ApproveRequest', button.getAttribute("relation"), status);
+        hubConnection.invoke('ApproveRequest', Number(button.getAttribute("relation")), status);
     }
 
     function handleRelation(request) {
@@ -59,17 +60,26 @@
         if (isInitiator) {
             let messageBox = document.querySelector("div.message-box input.user-id[value='" + request.toId + "']").closest("div.message-box");
             let button = null;
-
+            let removeButton = null;
+            let friendStatus = null;
             switch (request.status) {
                 case 1:
                     button = messageBox.querySelector("input.add-to-friend");
                     button.hidden = true;
-                    let friendStatus = messageBox.querySelector("div.friend-status");
+                    friendStatus = messageBox.querySelector("div.friend-status");
                     friendStatus.hidden = false;
+                    removeButton = messageBox.querySelector("input.delete-friend");
+                    removeButton.setAttribute("relation", request.relationshipId);
+                    removeButton.hidden = false;
                     break;
                 case 2:
                     button = messageBox.querySelector("input.add-to-friend");
                     button.disabled = false;
+                    button.hidden = false;
+                    friendStatus = messageBox.querySelector("div.friend-status");
+                    friendStatus.hidden = true;
+                    removeButton = messageBox.querySelector("input.delete-friend");
+                    removeButton.hidden = true;
                     break;
                 default:
                     break;
@@ -79,14 +89,23 @@
             let messageBox = document.querySelector("div.message-box input.user-id[value='" + request.fromId + "']").closest("div.message-box");
             let pending = messageBox.querySelector("div.pending");
             pending.hidden = true;
+            let removeButton = null;
+            let friendStatus = null;
             switch (request.status) {
                 case 1:
-                    let friendStatus = messageBox.querySelector("div.friend-status");
+                    friendStatus = messageBox.querySelector("div.friend-status");
                     friendStatus.hidden = false;
+                    removeButton = messageBox.querySelector("input.delete-friend");
+                    removeButton.setAttribute("relation", request.relationshipId);
+                    removeButton.hidden = false;
                     break;
                 case 2:
+                    friendStatus = messageBox.querySelector("div.friend-status");
+                    friendStatus.hidden = true;
                     let button = messageBox.querySelector("input.add-to-friend");
                     button.hidden = false;
+                    removeButton = messageBox.querySelector("input.delete-friend");
+                    removeButton.hidden = true;
                     break;
                 default:
                     break;

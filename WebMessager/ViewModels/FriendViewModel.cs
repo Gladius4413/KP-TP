@@ -7,7 +7,7 @@ namespace WebMessager.ViewModels
 {
     public class FriendViewModel
     {
-        public Guid RelationshipId { get; set; }
+        public long RelationshipId { get; set; }
         public DateTime Date { get; set; }
         public long FromId { get; set; }
         public long ToId { get; set; }

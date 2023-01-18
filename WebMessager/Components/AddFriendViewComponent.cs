@@ -31,7 +31,16 @@ namespace WebMessager.Components
                 Id = x.Id,
                 Name = x.Name
             }).ToList();
-            model.Requests = ChatHub.FriendRequests.Where(x=>x.FromId == currentUserId || x.ToId == currentUserId).ToList();
+            model.Requests = context.Friend.Where(x=>x.User1Id == currentUserId || x.User2Id == currentUserId).Select(fr => new FriendViewModel() {
+                RelationshipId = fr.Id,
+                FromId = fr.User1Id.Value,
+                ToId = fr.User2Id.Value,
+                From = context.User.First(x => x.Id == fr.User1Id).Name,
+                To = context.User.First(x => x.Id == fr.User2Id).Name,
+                Date = fr.Date,
+                Status = (FriendStatus)fr.Status
+
+            }).ToList();
             return View(model);
             
         }
