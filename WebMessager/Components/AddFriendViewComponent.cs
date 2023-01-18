@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WebMessager.Models;
+using WebMessager.Server;
 using WebMessager.ViewModels;
 
 namespace WebMessager.Components
@@ -24,7 +25,13 @@ namespace WebMessager.Components
             var currentUserId = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
             var users = await context.User.Where(x => x.Id != currentUserId).ToListAsync();
             var model = new IndexFriendViewModel();
-            model.Requests = users.Select(x => new FriendRequestViewModel() { UserId = x.Id, UserName = x.Name, Friends = new List<FriendViewModel> { } }).ToList();
+            model.CurrentUserId = currentUserId;
+            model.Users = users.Select(x => new UserViewModel
+            {
+                Id = x.Id,
+                Name = x.Name
+            }).ToList();
+            model.Requests = ChatHub.FriendRequests.Where(x=>x.FromId == currentUserId || x.ToId == currentUserId).ToList();
             return View(model);
             
         }

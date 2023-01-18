@@ -30,11 +30,13 @@ namespace WebMessager.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        [Authorize]
+        public IActionResult Friend()
         {
             return View();
         }
-        public IActionResult Friend()
+        [Authorize]
+        public IActionResult CreateGroupChat()
         {
             return View();
         }
@@ -46,8 +48,10 @@ namespace WebMessager.Controllers
 
             var user = db.User.First(x => x.Id == userId);
             var currentUserId = int.Parse(HttpContext.User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier).Value);
-            var Messages = db.PrivateMessage.Where(x =>
-                    (x.UserFromId == userId && x.UserToId == currentUserId) || (x.UserFromId == currentUserId && x.UserToId == userId)).Select(x => new PrivateMessageViewModel { Date = x.Date, From = x.UserFrom.Name, FromId = x.UserFromId, Text = x.Text, To = x.UserTo.Name, ToId = x.UserToId }).ToList();
+            var Messages = db.PrivateMessage
+                .Where(x =>(x.UserFromId == userId && x.UserToId == currentUserId) || (x.UserFromId == currentUserId && x.UserToId == userId))
+                .Select(x => new PrivateMessageViewModel { Date = x.Date, From = x.UserFrom.Name, FromId = x.UserFromId, Text = x.Text, To = x.UserTo.Name, ToId = x.UserToId })
+                .ToList();
             return View(new ChatViewModel
             {
                 UserId = user.Id,

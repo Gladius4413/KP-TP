@@ -9,8 +9,11 @@ namespace WebMessager.Models
     public class GroupChat
     {
         public long Id { get; set; }
-        public virtual ICollection<User> Users { get; set; }
+        public string name { get; set; }
+        public long UserId { get; set; }
+        public List<User> Users { get; set; }
 
+        public long GroupMessageId { get; set; }
         public List<GroupMessage> GroupMessages { get; set; }
 
 

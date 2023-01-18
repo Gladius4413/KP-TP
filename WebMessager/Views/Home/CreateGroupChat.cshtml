@@ -1,0 +1,27 @@
+﻿@model WebMessager.ViewModels.GroupChatViewModel;
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<form asp-action="CreateGroupChat" asp-controller="Home" >
+    <div>
+        <div>
+            <label asp-for="NumberOfChat">Введите номер чата</label>
+            <input type="text" asp-for="NumberOfChat" />
+        </div>
+        <div>
+            <label asp-for="Name">Введите Название чата</label>
+            <input asp-for="Name" />
+        </div>
+        <div>
+            <input type="submit" value="Войти" class="btn btn-outline-dark" />
+        </div>
+    </div>
+</form>
+<form asp-action="Index" asp-controller="Home" asp-anti-forgery="true">
+    <div class="form-group">
+        <input type="submit" value="Вернуться к чату" class="btn btn-outline-dark" />
+    </div>
+</form>

@@ -4,26 +4,96 @@
 <div>
     <label>Список пользователей</label>
 
-    @foreach (var req in Model.Requests)
+    @foreach (var user in Model.Users)
     {
-<div>
-    @*<p> @Html.ActionLink(@chat.UserName, "Messages", "Home", new { @chat.ConnectionId, @chat.UserId })  </p>*@
+        var rel = Model.Requests.FirstOrDefault(x => x.ToId == user.Id || x.FromId == user.Id);
 
-    <input type="text" id="userId" value="@req.UserId" hidden />
-    <input type="text" id="userName" value="@req.UserName" hidden />
-    <p>@req.UserName </p>
-    <input type="submit" id="AddToFriend" />
-
-</div>}
+<div class="message-box">
+    <input class="user-id" type="text" value="@user.Id" hidden />
+    <input class="user-name" type="text" value="@user.Name" hidden />
+    <p>@user.Name </p>
+    <input class="add-to-friend" type="submit" @(rel != null && rel.ToId == user.Id && rel.Status != WebMessager.ViewModels.FriendStatus.Pending? "hidden" : "") @(rel != null && rel.ToId == user.Id && rel.Status == WebMessager.ViewModels.FriendStatus.Pending ? "disabled" : "")/>
+    <div class="pending" @(rel != null && rel.ToId != user.Id && rel.Status == WebMessager.ViewModels.FriendStatus.Pending ? "":"hidden")>
+        <div>
+            <div>
+                <div>From <span class="name">@(rel?.From ?? "")</span></div>
+                <div><span class="date">@(rel?.Date.ToString() ?? "")</span></div>
+                <div>
+                    <input class="approve" type="button" value="Принять" relation="@(rel?.RelationshipId.ToString("D"))" onclick="approveRequest(this, true)">
+                </div>
+                <div>
+                    <input class="decline" type="button" value="Отказать"relation="@(rel?.RelationshipId.ToString("D"))"  onclick="approveRequest(this, false)">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="friend-status" @(rel!= null && rel.Status == WebMessager.ViewModels.FriendStatus.Approve ? "":"hidden")>Ваш друг</div>
+</div>
+    }
 
 
 </div>
 <script type="text/javascript">
+    var currentUserId = @Model.CurrentUserId;
     function createFriendRequest(request) {
-        let friendElem = document.createElement("div");
-        friendElem.innerHTML = "<div><div><div>From " + request.from + " : </div><div>" + new Date(message.date).toLocaleString() + "</div><div><input type=\"submit\" id=\"\" value=\"Отправить\"/>" + "</div><div><input type=\"submit\" id=\"\" value=\"Отправить\"/>" + "</div></div></div>";
+        let messageBox = document.querySelector("div.message-box input.user-id[value='" + request.fromId + "']").closest("div.message-box");
+        messageBox.querySelector("span.name").innerHTML = request.from;
+        messageBox.querySelector("span.date").innerHTML = new Date(request.date).toLocaleString();
+        messageBox.querySelector("input.approve").setAttribute("relation", request.relationshipId);
+        messageBox.querySelector("input.decline").setAttribute("relation", request.relationshipId);
 
+        let button = messageBox.querySelector("input.add-to-friend");
+        button.hidden = true;
+
+        let pending = messageBox.querySelector("div.pending");
+        pending.hidden = false;
     }
+
+    function approveRequest(button, status) {
+        hubConnection.invoke('ApproveRequest', button.getAttribute("relation"), status);
+    }
+
+    function handleRelation(request) {
+
+        var isInitiator = currentUserId == request.fromId;
+        if (isInitiator) {
+            let messageBox = document.querySelector("div.message-box input.user-id[value='" + request.toId + "']").closest("div.message-box");
+            let button = null;
+
+            switch (request.status) {
+                case 1:
+                    button = messageBox.querySelector("input.add-to-friend");
+                    button.hidden = true;
+                    let friendStatus = messageBox.querySelector("div.friend-status");
+                    friendStatus.hidden = false;
+                    break;
+                case 2:
+                    button = messageBox.querySelector("input.add-to-friend");
+                    button.disabled = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+        else {
+            let messageBox = document.querySelector("div.message-box input.user-id[value='" + request.fromId + "']").closest("div.message-box");
+            let pending = messageBox.querySelector("div.pending");
+            pending.hidden = true;
+            switch (request.status) {
+                case 1:
+                    let friendStatus = messageBox.querySelector("div.friend-status");
+                    friendStatus.hidden = false;
+                    break;
+                case 2:
+                    let button = messageBox.querySelector("input.add-to-friend");
+                    button.hidden = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
 
 
     const hubConnection = new signalR.HubConnectionBuilder()
@@ -34,20 +104,31 @@
     hubConnection.on('ReceiveReq', function (request) {
         createFriendRequest(request);
     });
-
-
-    // отправка сообщения на сервер
-    document.getElementById("AddToFriend").addEventListener("click", function (e) {
-        let userId = document.getElementById("userId");
-        let request = { idFrom: 0, idTo: Number(userId.value), date: null };
-        try {
-            hubConnection.invoke('SendFriendRequest', request);
-
-        }
-        catch (err) {
-            console.error(err);
-        }
+    // получение сообщения от сервера
+    hubConnection.on('changeRelation', function (request) {
+        handleRelation(request);
     });
+
+
+    var elements = document.getElementsByClassName("add-to-friend");
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].addEventListener("click", function (e) {
+
+            e.target.disabled = true;
+            let userId = e.target.closest(".message-box").querySelector(".user-id");
+            let request = { idFrom: 0, idTo: Number(userId.value), date: null };
+            try {
+                hubConnection.invoke('SendFriendRequest', request);
+
+            }
+            catch (err) {
+                console.error(err);
+            }
+        });
+    }
+    // отправка сообщения на сервер
+
+
 
     hubConnection.start();
 </script>

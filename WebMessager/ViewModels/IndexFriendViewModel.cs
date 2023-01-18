@@ -7,6 +7,10 @@ namespace WebMessager.ViewModels
 {
     public class IndexFriendViewModel
     {
-        public List<FriendRequestViewModel> Requests { get; set; }
+        public long CurrentUserId { get; set; }
+
+        public List<UserViewModel> Users { get; set; }
+
+        public List<FriendViewModel> Requests { get; set; }
     }
 }

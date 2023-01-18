@@ -23,6 +23,8 @@ namespace WebMessager.Server
         /// </summary>
         private static Dictionary<string, long> Connections = new();
 
+        public static List<FriendViewModel> FriendRequests = new();
+
         public async Task Send(MessageInfo mesInf)
         {
             var currentUserId = Connections[Context.ConnectionId];
@@ -51,23 +53,44 @@ namespace WebMessager.Server
 
         public async Task SendFriendRequest(FriendRequestInfo request)
         {
-
             var currentUserId = Connections[Context.ConnectionId];
-
 
             var friendViewModel = new FriendViewModel()
             {
+                RelationshipId = Guid.NewGuid(),
                 FromId = currentUserId,
                 ToId = request.IdTo,
                 From = db.User.First(x => x.Id == currentUserId).Name,
                 To = db.User.First(x => x.Id == request.IdTo).Name,
-                Date = DateTime.Now
+                Date = DateTime.Now,
+                Status = FriendStatus.Pending
 
             };
-            var connectionIds = Connections.Where(x => x.Value == request.IdTo || x.Value == currentUserId).Select(x => x.Key).ToList();
+            FriendRequests.Add(friendViewModel);
+            var connectionIds = Connections.Where(x => x.Value == request.IdTo).Select(x => x.Key).ToList();
             await Clients.Clients(connectionIds).SendAsync("ReceiveReq", friendViewModel);
+        }
 
+        public async Task ApproveRequest(Guid relationshipId, bool status)
+        {
+            var fr = FriendRequests.FirstOrDefault(fr => fr.RelationshipId == relationshipId);
 
+            if(fr != null)
+            {
+                var connectionIds = Connections.Where(x => x.Value == fr.FromId || x.Value == fr.ToId).Select(x => x.Key).ToList();
+                if (status)
+                {
+                    fr.Status = FriendStatus.Approve;
+                    
+                }
+                else
+                {
+                    fr.Status = FriendStatus.Decline;
+                    FriendRequests.Remove(fr);
+                }
+
+                await Clients.Clients(connectionIds).SendAsync("changeRelation", fr);
+            }
 
         }
 
