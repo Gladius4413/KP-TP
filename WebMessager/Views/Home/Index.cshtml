@@ -13,9 +13,12 @@
 
 
 <div>
-@section ListOfUsers {
-    @await Component.InvokeAsync("UserChats")
-}
+    @section ListOfUsers {
+        @await Component.InvokeAsync("UserChats")
+    }
+    @section ListOfFriends {
+        @await Component.InvokeAsync("ListOfFriends")
+    }
 </div>
 <br />
 <form asp-action="Logout" asp-controller="Account" asp-anti-forgery="true">

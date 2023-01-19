@@ -13,6 +13,9 @@
     @section ListOfUsers {
         @await Component.InvokeAsync("UserChats")
     }
+    @section ListOfFriends {
+        @await Component.InvokeAsync("ListOfFriends")
+    }
     @section CurrentMessages {
         @await Component.InvokeAsync("CurrentChat", Model)
     }

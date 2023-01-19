@@ -49,6 +49,10 @@
             {
                 RenderSection("AddFriends");
             }
+            @if (IsSectionDefined("ListOfFriends"))
+            {
+                RenderSection("ListOfFriends");
+            }
             @RenderBody()
         </main>
     </div>

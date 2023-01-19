@@ -1,0 +1,25 @@
+﻿@model WebMessager.ViewModels.IndexFriendViewModel;
+
+<div>
+    <label>Список Друзей</label>
+    @{ 
+    foreach (var fr in Model.Requests)
+    {
+        
+
+            if (fr.FromId == Model.CurrentUserId)
+            {
+                <p>
+                    @fr.To
+                </p>
+            }
+            else {
+                <p>
+                    @fr.From
+                </p>
+            }
+        }
+    }
+
+</div>
+
