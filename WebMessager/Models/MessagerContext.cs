@@ -29,11 +29,11 @@ namespace WebMessager.Models
             builder.HasOne(f => f.User1)
                     .WithMany()
                     .HasForeignKey(f => f.User1Id)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.ClientCascade);
             builder.HasOne(f => f.User2)
                     .WithMany()
                     .HasForeignKey(f => f.User2Id)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.ClientCascade);
 
 
 
@@ -49,12 +49,12 @@ namespace WebMessager.Models
             builder.HasOne(f => f.UserFrom)
                     .WithMany()
                     .HasForeignKey(f => f.UserFromId)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.ClientCascade);
 
             builder.HasOne(f => f.UserTo)
                     .WithMany()
                     .HasForeignKey(f => f.UserToId)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.ClientCascade);
 
 
 

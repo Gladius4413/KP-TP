@@ -60,7 +60,7 @@ namespace WebMessager.Controllers
                 if (user == null)
                 {
                     // добавляем пользователя в бд
-                    user = new User { Mail = model.Mail, Password = model.Password, Name = model.Name, SecondName = model.SecondName, AboutMe = model.AboutMe };
+                    user = new User { Mail = model.Mail, Password = model.Password, Name = model.Name, SecondName = model.SecondName, AboutMe = model.AboutMe, Role = UserRole.Default };
                     db.User.Add(user);
                     await db.SaveChangesAsync();
 

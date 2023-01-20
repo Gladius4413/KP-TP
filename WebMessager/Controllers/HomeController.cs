@@ -40,6 +40,17 @@ namespace WebMessager.Controllers
         {
             return View();
         }
+        public IActionResult DeleteUser(int id)
+        {
+            var user = db.User.First(u => u.Id == id);
+            var friends = db.Friend.Where(f => f.User1Id == user.Id || f.User2Id == user.Id);
+            var mess = db.PrivateMessage.Where(f => f.UserFromId == user.Id || f.UserToId == user.Id);
+            db.User.Remove(user);
+            db.Friend.RemoveRange(friends);
+            db.PrivateMessage.RemoveRange(mess);
+            db.SaveChanges();
+            return Redirect("/");
+        }
 
         [Authorize]
         [Route("Home/Messages/{userId}")]

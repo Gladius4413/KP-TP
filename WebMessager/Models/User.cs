@@ -14,6 +14,7 @@ namespace WebMessager.Models
         public string Name { get; set; }
         public string SecondName { get; set; }
         public string AboutMe { get; set; }
+        public UserRole Role { get; set; }
 
 
 
